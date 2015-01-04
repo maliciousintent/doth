@@ -1,6 +1,7 @@
 'use strict';
 
 var test = require('tape');
+var _ = require('lodash');
 var Doth = require('../');
 
 var fixtures = {
@@ -73,6 +74,35 @@ test('deep with array', function (t) {
   t.equal(doth.get(fixtures.testDeepArray, 'a.AAs'), fixtures.testDeepArray.a.AAs);
   t.deepEqual(doth.get(fixtures.testDeepArray, 'a.AAs[].foo'), ['bar', 'bar1', 'bar2']);
   t.throws(function () { doth.get(fixtures.testDeepArray, 'a.BB[].baz'); }, 'throws if using [] but branch is not an array');
+  t.end();
+});
+
+
+test('replace', function (t) {
+  var doth = new Doth();
+  doth.strict = false;
+  
+  var _testArray1 = _.clone(fixtures.testDeepArray);
+  doth.replace(_testArray1, 'a.AAs[].foo', function _replacer(item) {
+    return 'rrr' + item;
+  });
+  t.deepEqual(_testArray1, {
+    a: {
+      AAs: [
+        { foo: 'rrrbar' },
+        { foo: 'rrrbar1' },
+        { foo: 'rrrbar2' }
+      ],
+      BB: { baz: 'bar' }
+    }
+  }, 'in array');
+  
+  var _testArray2 = _.clone(fixtures.testDeep);
+  doth.replace(_testArray2, 'b.BB.B', function _replacer(item) {
+    return 'rrr' + item;
+  });
+  t.deepEqual(_testArray2,  { a: { AA: 'foo' }, b: { BB: { B: 'rrrbar' }, CC: 'baz' } }, 'in array');
+  
   t.end();
 });
 

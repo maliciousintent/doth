@@ -37,10 +37,38 @@ Doth.prototype.get = function(object, dottedPath) {
 };
 
 
-function _rGetHelper(object, pathArray) {
+Doth.prototype.get = function(object, dottedPath) {
+  return this.replace(object, dottedPath, undefined);
+};
+
+
+Doth.prototype.replace = function(object, dottedPath, replaceFn) {
+  assert(typeof object === 'object', 'First parameter to Doth.get should be an object, not ' + typeof object);
+  assert(typeof dottedPath === 'string', 'Second parameter to Doth.get should be a string, not ' + typeof dottedPath);
   
-  if (pathArray.length === 0) {
-    return object;
+  dottedPath = dottedPath.split('.');
+  assert(dottedPath.length > 0, 'Path should not be empty');
+  
+  var ret = _rGetHelper(object, dottedPath, replaceFn);
+  
+  if (ret === undefined && this.strict) {
+    throw new Error('Path branch or leaf led to undefined (and strict is true).');
+  } else {
+    return ret;
+  }
+};
+
+
+function _rGetHelper(object, pathArray, replaceFn) {
+  
+  if (pathArray.length === 1) {
+    var leaf = pathArray.pop();
+    
+    if (typeof replaceFn === 'function') {
+      object[leaf] = replaceFn(object[leaf]);
+    }
+    
+    return object[leaf];
   }
   
   var pathToken = pathArray.shift();
@@ -57,11 +85,11 @@ function _rGetHelper(object, pathArray) {
       assert(Array.isArray(object[pathToken]), 'Array expected in Doth.get while evaluating rest path ' + pathArray.join('.') + ', got ' + object[pathToken]);
       
       return object[pathToken].map(function _mapper(item) {
-        return _rGetHelper(item, _.clone(pathArray));
+        return _rGetHelper(item, _.clone(pathArray), replaceFn);
       });
       
     } else {
-      return _rGetHelper(object[pathToken], pathArray);
+      return _rGetHelper(object[pathToken], pathArray, replaceFn);
     }
   } else {
     return undefined;

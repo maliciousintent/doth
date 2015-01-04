@@ -1,6 +1,6 @@
 {
   "name": "doth",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "access js objects using a dotted-path notation (like in mongodb)",
   "main": "index.js",
   "scripts": {
@@ -20,6 +20,7 @@
     "lodash": "^2.4.1"
   },
   "devDependencies": {
+    "lodash": "^2.4.1",
     "tape": "^3.0.3"
   }
 }
