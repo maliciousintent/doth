@@ -20,6 +20,16 @@ var fixtures = {
       },
       CC: 'baz'
     }
+  },
+  
+  testDeepArray: {
+    a: {
+      AAs: [
+        { foo: 'bar' },
+        { foo: 'bar1' },
+        { foo: 'bar2' }
+      ]
+    }
   }
 };
 
@@ -42,6 +52,16 @@ test('deep path', function (t) {
   t.equal(doth.get(fixtures.testDeep, 'b.BB'), fixtures.testDeep.b.BB);
   t.equal(doth.get(fixtures.testDeep, 'b.CC'), fixtures.testDeep.b.CC);
   t.equal(doth.get(fixtures.testDeep, 'b.BB.B'), fixtures.testDeep.b.BB.B);
+  t.end();
+});
+
+
+test('deep with array', function (t) {
+  var doth = new Doth();
+  doth.strict = false;
+  t.skip(doth.get(fixtures.testDeepArray, 'a.AAs'), fixtures.testDeepArray.a.AAs);
+  t.skip(function () { doth.get(fixtures.testDeep, 'a.AAs.foo'); }, 'throws if not using [] and branch is an array');
+  t.skip(doth.get(fixtures.testDeepArray, 'b.AAs[].foo'), ['bar', 'bar1', 'bar2']);
   t.end();
 });
 
