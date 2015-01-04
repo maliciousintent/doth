@@ -1,0 +1,24 @@
+{
+  "name": "doth",
+  "version": "0.0.1",
+  "description": "access js objects using a dotted-path notation (like in mongodb)",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:plasticpanda/doth.git"
+  },
+  "author": "Simone Lusenti <simone@plasticpanda.com>",
+  "license": "GPLv3",
+  "bugs": {
+    "url": "https://github.com/plasticpanda/doth/issues"
+  },
+  "homepage": "https://github.com/plasticpanda/doth",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "tape": "^3.0.3"
+  }
+}
