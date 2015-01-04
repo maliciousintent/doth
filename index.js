@@ -1,6 +1,7 @@
 'use strict';
 
 var assert = require('assert');
+var _ = require('lodash');
 
 module.exports = Doth;
 
@@ -25,24 +26,44 @@ Doth.prototype.get = function(object, dottedPath) {
   
   dottedPath = dottedPath.split('.');
   assert(dottedPath.length > 0, 'Path should not be empty');
-    
-  var ret = object;
   
-  while (dottedPath.length > 0) {
-    var pathToken = dottedPath.shift();
-    
-    if (ret.hasOwnProperty(pathToken)) {
-      ret = ret[pathToken];
-    } else {
-      if (this.strict) {
-        throw new Error('Path branch or leaf led to undefined (and strict is true).');
-      } else {
-        return undefined;
-      }
-    }
+  var ret = _rGetHelper(object, dottedPath);
+  
+  if (ret === undefined && this.strict) {
+    throw new Error('Path branch or leaf led to undefined (and strict is true).');
+  } else {
+    return ret;
   }
-  
-  return ret;
 };
 
 
+function _rGetHelper(object, pathArray) {
+  
+  if (pathArray.length === 0) {
+    return object;
+  }
+  
+  var pathToken = pathArray.shift();
+  var branchIsArray = false;
+  
+  if (pathToken.indexOf('[]') !== -1) {
+    branchIsArray = true;
+    pathToken = pathToken.replace('[]', '');
+  }
+    
+  if (object.hasOwnProperty(pathToken)) {
+    
+    if (branchIsArray) {
+      assert(Array.isArray(object[pathToken]), 'Array expected in Doth.get while evaluating rest path ' + pathArray.join('.') + ', got ' + object[pathToken]);
+      
+      return object[pathToken].map(function _mapper(item) {
+        return _rGetHelper(item, _.clone(pathArray));
+      });
+      
+    } else {
+      return _rGetHelper(object[pathToken], pathArray);
+    }
+  } else {
+    return undefined;
+  }
+}

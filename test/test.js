@@ -28,6 +28,17 @@ var fixtures = {
         { foo: 'bar' },
         { foo: 'bar1' },
         { foo: 'bar2' }
+      ],
+      BB: { baz: 'bar' }
+    }
+  },
+  
+  testDeepMultipleArray: {
+    a: {
+      AAs: [
+        { inner: [{ foo: 'bar', oof: 'bar1' }, { foo: 'bar', oof: 'bar7' }] },
+        { inner: [{ foo: 'bar2', oof: 'bar3' }] },
+        { inner: [{ foo: 'bar4', oof: 'bar5' }] }
       ]
     }
   }
@@ -59,9 +70,18 @@ test('deep path', function (t) {
 test('deep with array', function (t) {
   var doth = new Doth();
   doth.strict = false;
-  t.skip(doth.get(fixtures.testDeepArray, 'a.AAs'), fixtures.testDeepArray.a.AAs);
-  t.skip(function () { doth.get(fixtures.testDeep, 'a.AAs.foo'); }, 'throws if not using [] and branch is an array');
-  t.skip(doth.get(fixtures.testDeepArray, 'b.AAs[].foo'), ['bar', 'bar1', 'bar2']);
+  t.equal(doth.get(fixtures.testDeepArray, 'a.AAs'), fixtures.testDeepArray.a.AAs);
+  t.deepEqual(doth.get(fixtures.testDeepArray, 'a.AAs[].foo'), ['bar', 'bar1', 'bar2']);
+  t.throws(function () { doth.get(fixtures.testDeepArray, 'a.BB[].baz'); }, 'throws if using [] but branch is not an array');
+  t.end();
+});
+
+
+test('deep with multiple nested arrays', function (t) {
+  var doth = new Doth();
+  doth.strict = false;
+  t.equal(doth.get(fixtures.testDeepMultipleArray, 'a.AAs'), fixtures.testDeepMultipleArray.a.AAs);
+  t.deepEqual(doth.get(fixtures.testDeepMultipleArray, 'a.AAs[].inner[].oof'), [ [ 'bar1', 'bar7' ], [ 'bar3' ], [ 'bar5' ]]);
   t.end();
 });
 

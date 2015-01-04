@@ -5,7 +5,7 @@
 [![NPM](https://nodei.co/npm/doth.png)](https://nodei.co/npm/doth/)
 
 
-Access js objects using a dotted-path notation (like in mongodb), with no dependencies.
+Access js objects using a dotted-path notation (like in mongodb)
 
 For usage check the ```test``` folder.
 
