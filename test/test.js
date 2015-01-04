@@ -82,7 +82,16 @@ test('replace', function (t) {
   var doth = new Doth();
   doth.strict = false;
   
+  var _testArray0 = _.clone(fixtures.testShallow);
+  doth.replace(_testArray0, 'a', function _replacer(item) {
+    return 'rrr' + item;
+  });
+  t.deepEqual(_testArray0, {
+    a: 'rrrfoo',
+    b: [1, 2, 3]
+  }, 'shallow');
   var _testArray1 = _.clone(fixtures.testDeepArray);
+
   doth.replace(_testArray1, 'a.AAs[].foo', function _replacer(item) {
     return 'rrr' + item;
   });
